@@ -1,7 +1,37 @@
 trigger:
-- main
+- develop
 
-pool:
-  vmImage: ubuntu-latest
+pool: 
+  name: Azure-agent
 
-steps:
+steps: 
+- task: NodeTool@0
+  inputs:
+    versionSource: 'spec'
+    versionSpec: '16.x'
+
+- task: PowerShell@2
+  displayName: Npm Install
+  inputs:
+    targetType: 'inline'
+    script: 'npm install'
+
+- task: PowerShell@2
+  displayName: Npm Run Build
+  inputs:
+    targetType: 'inline'
+    script: 'npm run build'
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(System.DefaultWorkingDirectory)/build/'
+    includeRootFolder: true
+    archiveType: 'zip'
+    archiveFile: '$(System.DefaultWorkingDirectory)/build.zip'
+    replaceExistingArchive: true
+
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: '$(System.DefaultWorkingDirectory)/build.zip'
+    artifact: 'todo-ui'
+    publishLocation: 'pipeline'
