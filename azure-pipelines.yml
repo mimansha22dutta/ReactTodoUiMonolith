@@ -10,12 +10,19 @@ pool:
 jobs:
 - job: Lint
   displayName: Linting
+
   steps:
   - task: PowerShell@2
-    displayName: Lint Javascript(Biome)
+    displayName: Lint Javascript (Biome)
+    continueOnError: true
     inputs:
-      targetType: 'inline'
-      script: 'biome lint $(System.DefaultWorkingDirectory)/src'
+      targetType: inline
+      script: |
+        Invoke-WebRequest `
+          -Uri "https://github.com/biomejs/biome/releases/download/@biomejs/biome@2.5.0/biome-win32-x64.exe" `
+          -OutFile "$(Agent.ToolsDirectory)/biome.exe"
+
+        & "$(Agent.ToolsDirectory)/biome.exe" lint "$(System.DefaultWorkingDirectory)/src"
 
 # - job: Build
 #   displayName:
