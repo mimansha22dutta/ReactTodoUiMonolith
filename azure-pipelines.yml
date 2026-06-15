@@ -4,6 +4,15 @@ trigger:
 pool: 
   name: Azure-agent
 
+stages:
+  - stage: Linting
+    displayName: Linting
+    jobs:
+      - job: Lint Frontend
+        steps:
+          - script: 
+
+
 steps: 
 - task: NodeTool@0
   inputs:
