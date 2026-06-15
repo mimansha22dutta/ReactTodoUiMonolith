@@ -4,43 +4,49 @@ trigger:
 pool: 
   name: Azure-agent
 
-stages:
-  - stage: Linting
-    displayName: Linting
-    jobs:
-      - job: Lint Frontend
-        steps:
-          - script: 
+# stages:
+#   - stage: Linting
+#     displayName: Linting
+jobs:
+- job: Lint
+  displayName: Linting
+  steps:
+  - task: PowerShell@2
+    displayName: Lint Javascript(Biome)
+    inputs:
+      targetType: 'inline'
+      script: 'biome lint $(System.DefaultWorkingDirectory)/src'
 
+# - job: Build
+#   displayName:
+#   steps: 
+#   - task: NodeTool@0
+#     inputs:
+#       versionSource: 'spec'
+#       versionSpec: '16.x'
 
-steps: 
-- task: NodeTool@0
-  inputs:
-    versionSource: 'spec'
-    versionSpec: '16.x'
+#   - task: PowerShell@2
+#     displayName: Npm Install
+#     inputs:
+#       targetType: 'inline'
+#       script: 'npm install'
 
-- task: PowerShell@2
-  displayName: Npm Install
-  inputs:
-    targetType: 'inline'
-    script: 'npm install'
+#   - task: PowerShell@2
+#     displayName: Npm Run Build
+#     inputs:
+#       targetType: 'inline'
+#       script: 'npm run build'
 
-- task: PowerShell@2
-  displayName: Npm Run Build
-  inputs:
-    targetType: 'inline'
-    script: 'npm run build'
+#   # - task: ArchiveFiles@2
+#     inputs:
+#       rootFolderOrFile: '$(System.DefaultWorkingDirectory)/build/'
+#       includeRootFolder: true
+#       archiveType: 'zip'
+#       archiveFile: '$(System.DefaultWorkingDirectory)/build.zip'
+#       replaceExistingArchive: true
 
-- task: ArchiveFiles@2
-  inputs:
-    rootFolderOrFile: '$(System.DefaultWorkingDirectory)/build/'
-    includeRootFolder: true
-    archiveType: 'zip'
-    archiveFile: '$(System.DefaultWorkingDirectory)/build.zip'
-    replaceExistingArchive: true
-
-- task: PublishPipelineArtifact@1
-  inputs:
-    targetPath: '$(System.DefaultWorkingDirectory)/build.zip'
-    artifact: 'todo-ui'
-    publishLocation: 'pipeline'
+#   - task: PublishPipelineArtifact@1
+#     inputs:
+#       targetPath: '$(System.DefaultWorkingDirectory)/build.zip'
+#       artifact: 'todo-ui'
+#       publishLocation: 'pipeline'
