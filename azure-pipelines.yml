@@ -13,7 +13,7 @@ jobs:
 
   steps:
   - task: PowerShell@2
-    displayName: Lint Javascript (Biome)
+    displayName: Lint JavaScript (Biome)
     continueOnError: true
     inputs:
       targetType: inline
@@ -23,6 +23,16 @@ jobs:
           -OutFile "$(Agent.ToolsDirectory)/biome.exe"
 
         & "$(Agent.ToolsDirectory)/biome.exe" lint "$(System.DefaultWorkingDirectory)/src"
+
+  - task: PowerShell@2
+    displayName: Lint CSS (Stylelint)
+    continueOnError: true
+    inputs:
+      targetType: 'inline'
+      script: |
+        npm install -g stylelint
+        npm install -g stylelint-config-standard
+        stylelint $(System.DefaultWorkingDirectory)/src
 
 # - job: Build
 #   displayName:
