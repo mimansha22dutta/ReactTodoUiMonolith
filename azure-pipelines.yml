@@ -9,7 +9,7 @@ pool:
 #     displayName: Linting
 jobs:
 - job: Lint
-  displayName: Linting
+  displayName: Lint Job
 
   steps:
   - task: PowerShell@2
@@ -44,7 +44,9 @@ jobs:
         py -m yamllint "$(System.DefaultWorkingDirectory)"  
 
 - job: Build
-  displayName:
+  dependsOn: Lint
+  displayName: Build Job
+
   steps: 
   - task: NodeTool@0
     inputs:
