@@ -34,6 +34,17 @@ jobs:
         npm install -g stylelint-config-standard
         stylelint $(System.DefaultWorkingDirectory)/src
 
+  - task: PowerShell@2
+    displayName: Lint Yaml (Yamllint)
+    continueOnError: true
+    inputs:
+      targetType: 'inline'
+      script: |
+        pip install --user yamllint
+        yamllint $(System.DefaultWorkingDirectory)
+
+  
+
 # - job: Build
 #   displayName:
 #   steps: 
