@@ -41,41 +41,38 @@ jobs:
       targetType: 'inline'
       script: |
         py -m pip install yamllint
-        py -m yamllint "$(System.DefaultWorkingDirectory)"
+        py -m yamllint "$(System.DefaultWorkingDirectory)"  
 
+- job: Build
+  displayName:
+  steps: 
+  - task: NodeTool@0
+    inputs:
+      versionSource: 'spec'
+      versionSpec: '16.x'
 
-  
+  - task: PowerShell@2
+    displayName: Npm Install
+    inputs:
+      targetType: 'inline'
+      script: 'npm install'
 
-# - job: Build
-#   displayName:
-#   steps: 
-#   - task: NodeTool@0
-#     inputs:
-#       versionSource: 'spec'
-#       versionSpec: '16.x'
+  - task: PowerShell@2
+    displayName: Npm Run Build
+    inputs:
+      targetType: 'inline'
+      script: 'npm run build'
 
-#   - task: PowerShell@2
-#     displayName: Npm Install
-#     inputs:
-#       targetType: 'inline'
-#       script: 'npm install'
+  # - task: ArchiveFiles@2
+    # inputs:
+    #   rootFolderOrFile: '$(System.DefaultWorkingDirectory)/build/'
+    #   includeRootFolder: true
+    #   archiveType: 'zip'
+    #   archiveFile: '$(System.DefaultWorkingDirectory)/build.zip'
+    #   replaceExistingArchive: true
 
-#   - task: PowerShell@2
-#     displayName: Npm Run Build
-#     inputs:
-#       targetType: 'inline'
-#       script: 'npm run build'
-
-#   # - task: ArchiveFiles@2
-#     inputs:
-#       rootFolderOrFile: '$(System.DefaultWorkingDirectory)/build/'
-#       includeRootFolder: true
-#       archiveType: 'zip'
-#       archiveFile: '$(System.DefaultWorkingDirectory)/build.zip'
-#       replaceExistingArchive: true
-
-#   - task: PublishPipelineArtifact@1
-#     inputs:
-#       targetPath: '$(System.DefaultWorkingDirectory)/build.zip'
-#       artifact: 'todo-ui'
-#       publishLocation: 'pipeline'
+  - task: PublishPipelineArtifact@1
+    inputs:
+      targetPath: '$(System.DefaultWorkingDirectory)/build/'
+      artifact: 'todo-ui'
+      publishLocation: 'pipeline'
