@@ -40,8 +40,9 @@ jobs:
     inputs:
       targetType: 'inline'
       script: |
-        pip install --user yamllint
-        yamllint $(System.DefaultWorkingDirectory)
+        py -m pip install yamllint
+        py -m yamllint "$(System.DefaultWorkingDirectory)"
+
 
   
 
