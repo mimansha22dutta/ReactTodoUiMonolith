@@ -21,9 +21,10 @@ jobs:
       cliSources: '.'
 
   - powershell: |
-      Write-Host "Source Branch: $(Build.SourceBranch)"
-      Write-Host "Source Branch Name: $(Build.SourceBranchName)"
-    displayName: 'Check Branch'
+      Get-ChildItem -Path "$(Agent.TempDirectory)" -Recurse |
+      Where-Object {$_.Name -like "*sonar*"} |
+      Select-Object FullName
+    displayName: 'Find Sonar Files'
 
   - task: SonarQubeAnalyze@8
     inputs:
