@@ -21,10 +21,9 @@ jobs:
       cliSources: '.'
 
   - powershell: |
-      Get-ChildItem -Path "$(Agent.TempDirectory)" -Recurse |
-      Where-Object {$_.Name -like "*sonar*"} |
-      Select-Object FullName
-    displayName: 'Find Sonar Files'
+      Write-Host "SONARQUBE_SCANNER_PARAMS:"
+      Write-Host $env:SONARQUBE_SCANNER_PARAMS
+    displayName: 'Print Sonar Params'
 
   - task: SonarQubeAnalyze@8
     inputs:
