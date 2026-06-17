@@ -30,73 +30,73 @@ jobs:
       jdkversion: 'JAVA_HOME_17_X64'
 
 
-- job: Lint
-  displayName: Lint Job
+# - job: Lint
+#   displayName: Lint Job
 
-  steps:
-  - task: PowerShell@2
-    displayName: Lint JavaScript (Biome)
-    continueOnError: true
-    inputs:
-      targetType: inline
-      script: |
-        Invoke-WebRequest `
-          -Uri "https://github.com/biomejs/biome/releases/download/@biomejs/biome@2.5.0/biome-win32-x64.exe" `
-          -OutFile "$(Agent.ToolsDirectory)/biome.exe"
+#   steps:
+#   - task: PowerShell@2
+#     displayName: Lint JavaScript (Biome)
+#     continueOnError: true
+#     inputs:
+#       targetType: inline
+#       script: |
+#         Invoke-WebRequest `
+#           -Uri "https://github.com/biomejs/biome/releases/download/@biomejs/biome@2.5.0/biome-win32-x64.exe" `
+#           -OutFile "$(Agent.ToolsDirectory)/biome.exe"
 
-        & "$(Agent.ToolsDirectory)/biome.exe" lint "$(System.DefaultWorkingDirectory)/src"
+#         & "$(Agent.ToolsDirectory)/biome.exe" lint "$(System.DefaultWorkingDirectory)/src"
 
-  - task: PowerShell@2
-    displayName: Lint CSS (Stylelint)
-    continueOnError: true
-    inputs:
-      targetType: 'inline'
-      script: |
-        npm install -g stylelint
-        npm install -g stylelint-config-standard
-        stylelint $(System.DefaultWorkingDirectory)/src
+#   - task: PowerShell@2
+#     displayName: Lint CSS (Stylelint)
+#     continueOnError: true
+#     inputs:
+#       targetType: 'inline'
+#       script: |
+#         npm install -g stylelint
+#         npm install -g stylelint-config-standard
+#         stylelint $(System.DefaultWorkingDirectory)/src
 
-  - task: PowerShell@2
-    displayName: Lint Yaml (Yamllint)
-    continueOnError: true
-    inputs:
-      targetType: 'inline'
-      script: |
-        py -m pip install yamllint
-        py -m yamllint "$(System.DefaultWorkingDirectory)"  
+#   - task: PowerShell@2
+#     displayName: Lint Yaml (Yamllint)
+#     continueOnError: true
+#     inputs:
+#       targetType: 'inline'
+#       script: |
+#         py -m pip install yamllint
+#         py -m yamllint "$(System.DefaultWorkingDirectory)"  
 
-- job: Build
-  dependsOn: Lint
-  displayName: Build Job
+# - job: Build
+#   dependsOn: Lint
+#   displayName: Build Job
 
-  steps: 
-  - task: NodeTool@0
-    inputs:
-      versionSource: 'spec'
-      versionSpec: '16.x'
+#   steps: 
+#   - task: NodeTool@0
+#     inputs:
+#       versionSource: 'spec'
+#       versionSpec: '16.x'
 
-  - task: PowerShell@2
-    displayName: Npm Install
-    inputs:
-      targetType: 'inline'
-      script: 'npm install'
+#   - task: PowerShell@2
+#     displayName: Npm Install
+#     inputs:
+#       targetType: 'inline'
+#       script: 'npm install'
 
-  - task: PowerShell@2
-    displayName: Npm Run Build
-    inputs:
-      targetType: 'inline'
-      script: 'npm run build'
+#   - task: PowerShell@2
+#     displayName: Npm Run Build
+#     inputs:
+#       targetType: 'inline'
+#       script: 'npm run build'
 
-  # - task: ArchiveFiles@2
-    # inputs:
-    #   rootFolderOrFile: '$(System.DefaultWorkingDirectory)/build/'
-    #   includeRootFolder: true
-    #   archiveType: 'zip'
-    #   archiveFile: '$(System.DefaultWorkingDirectory)/build.zip'
-    #   replaceExistingArchive: true
+#   # - task: ArchiveFiles@2
+#     # inputs:
+#     #   rootFolderOrFile: '$(System.DefaultWorkingDirectory)/build/'
+#     #   includeRootFolder: true
+#     #   archiveType: 'zip'
+#     #   archiveFile: '$(System.DefaultWorkingDirectory)/build.zip'
+#     #   replaceExistingArchive: true
 
-  - task: PublishPipelineArtifact@1
-    inputs:
-      targetPath: '$(System.DefaultWorkingDirectory)/build/'
-      artifact: 'todo-ui'
-      publishLocation: 'pipeline'
+#   - task: PublishPipelineArtifact@1
+#     inputs:
+#       targetPath: '$(System.DefaultWorkingDirectory)/build/'
+#       artifact: 'todo-ui'
+#       publishLocation: 'pipeline'
