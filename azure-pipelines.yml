@@ -8,6 +8,22 @@ pool:
 #   - stage: Linting
 #     displayName: Linting
 jobs:
+- job: StaticAnalysis
+  displayName: Static Analysis (SonarQube)
+  steps:
+  - task: SonarQubePrepare@8
+    inputs:
+      SonarQube: 'SonarQube'
+      scannerMode: 'cli'
+      configMode: 'manual'
+      cliProjectKey: 'PipelineProjectUi'
+      cliProjectName: 'PipelineProjectUi'
+      cliSources: '.'
+  - task: SonarQubeAnalyze@8
+    inputs:
+      jdkversion: 'JAVA_HOME_17_X64'
+
+
 - job: Lint
   displayName: Lint Job
 
