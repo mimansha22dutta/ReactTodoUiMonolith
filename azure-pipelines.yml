@@ -1,5 +1,5 @@
 trigger:
-- main
+- develop
 
 pool: 
   name: Azure-agent
@@ -13,11 +13,11 @@ jobs:
   steps:
   - task: SonarQubePrepare@8
     inputs:
-      SonarQube: 'SonarQube-pipeline'
+      SonarQube: 'SonarQube'
       scannerMode: 'cli'
       configMode: 'manual'
-      cliProjectKey: 'PipelineProjectUi'
-      cliProjectName: 'PipelineProjectUi'
+      cliProjectKey: 'ReactTodoUiMonolithic'
+      cliProjectName: 'ReactTodoUiMonolithic'
       cliSources: '.'
 
   - powershell: |
