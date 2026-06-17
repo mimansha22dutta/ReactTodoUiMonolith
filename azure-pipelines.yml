@@ -19,6 +19,12 @@ jobs:
       cliProjectKey: 'PipelineProjectUi'
       cliProjectName: 'PipelineProjectUi'
       cliSources: '.'
+
+  - powershell: |
+      Write-Host "Source Branch: $(Build.SourceBranch)"
+      Write-Host "Source Branch Name: $(Build.SourceBranchName)"
+    displayName: 'Check Branch'
+
   - task: SonarQubeAnalyze@8
     inputs:
       jdkversion: 'JAVA_HOME_17_X64'
