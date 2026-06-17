@@ -25,6 +25,12 @@ jobs:
       Write-Host $env:SONARQUBE_SCANNER_PARAMS
     displayName: 'Print Sonar Params'
 
+  - powershell: |
+      $params = $env:SONARQUBE_SCANNER_PARAMS
+      $params = $params -replace '"sonar.branch.name":"[^"]*",?', ''
+      Write-Host "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$params"
+    displayName: 'Remove sonar.branch.name'
+
   - task: SonarQubeAnalyze@8
     inputs:
       jdkversion: 'JAVA_HOME_17_X64'
