@@ -11,29 +11,33 @@ jobs:
 - job: StaticAnalysis
   displayName: Static Analysis (SonarQube)
   steps:
-  - task: SonarQubePrepare@8
-    inputs:
-      SonarQube: 'SonarQube'
-      scannerMode: 'cli'
-      configMode: 'manual'
-      cliProjectKey: 'ReactTodoUiMonolithic'
-      cliProjectName: 'ReactTodoUiMonolithic'
-      cliSources: '.'
+    - task: PowerShell@2
+      inputs:
+        targetType: 'inline'
+        script: 'sonar -D sonar.host.url=http://localhost:9000 -D sonar.token=sqa_824844a4fe17a34458dc1d4fbbe57ecf4ded866b -D sonar.projectKey=ReactTodoUiMonolithic'
+  # - task: SonarQubePrepare@8
+  #   inputs:
+  #     SonarQube: 'SonarQube'
+  #     scannerMode: 'cli'
+  #     configMode: 'manual'
+  #     cliProjectKey: 'ReactTodoUiMonolithic'
+  #     cliProjectName: 'ReactTodoUiMonolithic'
+  #     cliSources: '.'
 
-  - powershell: |
-      Write-Host "SONARQUBE_SCANNER_PARAMS:"
-      Write-Host $env:SONARQUBE_SCANNER_PARAMS
-    displayName: 'Print Sonar Params'
+  # - powershell: |
+  #     Write-Host "SONARQUBE_SCANNER_PARAMS:"
+  #     Write-Host $env:SONARQUBE_SCANNER_PARAMS
+  #   displayName: 'Print Sonar Params'
 
-  - powershell: |
-      $params = $env:SONARQUBE_SCANNER_PARAMS
-      $params = $params -replace '"sonar.branch.name":"[^"]*",?', ''
-      Write-Host "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$params"
-    displayName: 'Remove sonar.branch.name'
+  # - powershell: |
+  #     $params = $env:SONARQUBE_SCANNER_PARAMS
+  #     $params = $params -replace '"sonar.branch.name":"[^"]*",?', ''
+  #     Write-Host "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$params"
+  #   displayName: 'Remove sonar.branch.name'
 
-  - task: SonarQubeAnalyze@8
-    inputs:
-      jdkversion: 'JAVA_HOME_17_X64'
+  # - task: SonarQubeAnalyze@8
+  #   inputs:
+  #     jdkversion: 'JAVA_HOME_17_X64'
 
 
 # - job: Lint
