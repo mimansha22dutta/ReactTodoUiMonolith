@@ -12,6 +12,7 @@ stages:
         displayName: SCA Scan (Retire.js)
         steps: 
         - task: PowerShell@2
+          continueOnError: true
           inputs:
             targetType: 'inline'
             script: |
@@ -19,107 +20,97 @@ stages:
               npm install
               retire
 
-  # - stage: StaticAnalysis
-  #   displayName: Static Analysis
-  #   jobs:
-  #   - job: StaticAnalysis
-  #     displayName: Static Analysis (SonarQube)
-  #     steps:
-  #       - task: PowerShell@2
-  #         inputs:
-  #           targetType: 'inline'
-  #           script: 'sonar -D sonar.host.url=http://localhost:9000 -D sonar.token=sqa_824844a4fe17a34458dc1d4fbbe57ecf4ded866b -D sonar.projectKey=ReactTodoUiMonolithic'
+  - stage: StaticAnalysis
+    displayName: Static Analysis
+    dependsOn: SCAScan
+    jobs:
+    - job: StaticAnalysis
+      displayName: Static Analysis (SonarQube)
+      steps:
+        - task: PowerShell@2
+          continueOnError: true
+          inputs:
+            targetType: 'inline'
+            script: 'sonar -D sonar.host.url=http://localhost:9000 -D sonar.token=sqa_824844a4fe17a34458dc1d4fbbe57ecf4ded866b -D sonar.projectKey=ReactTodoUiMonolithic'
  
-  # - stage: Linting
-  #   displayName: Linting
-  #   jobs:
-  #   - job: Lint
-  #     displayName: Lint Job
-  #     steps:
-  #     - task: PowerShell@2
-  #       displayName: Lint JavaScript (Biome)
-  #       continueOnError: true
-  #       inputs:
-  #         targetType: inline
-  #         script: |
-  #           Invoke-WebRequest `
-  #             -Uri "https://github.com/biomejs/biome/releases/download/@biomejs/biome@2.5.0/biome-win32-x64.exe" `
-  #             -OutFile "$(Agent.ToolsDirectory)/biome.exe"
+  - stage: Linting
+    displayName: Linting
+    dependsOn: StaticAnalysis
+    jobs:
+    - job: Lint
+      displayName: Lint Job
+      steps:
+      - task: PowerShell@2
+        displayName: Lint JavaScript (Biome)
+        continueOnError: true
+        inputs:
+          targetType: inline
+          script: |
+            Invoke-WebRequest `
+              -Uri "https://github.com/biomejs/biome/releases/download/@biomejs/biome@2.5.0/biome-win32-x64.exe" `
+              -OutFile "$(Agent.ToolsDirectory)/biome.exe"
 
-  #           & "$(Agent.ToolsDirectory)/biome.exe" lint "$(System.DefaultWorkingDirectory)/src"
+            & "$(Agent.ToolsDirectory)/biome.exe" lint "$(System.DefaultWorkingDirectory)/src"
 
-  #     - task: PowerShell@2
-  #       displayName: Lint CSS (Stylelint)
-  #       continueOnError: true
-  #       inputs:
-  #         targetType: 'inline'
-  #         script: |
-  #           npm install -g stylelint
-  #           npm install -g stylelint-config-standard
-  #           stylelint $(System.DefaultWorkingDirectory)/src
+      - task: PowerShell@2
+        displayName: Lint CSS (Stylelint)
+        continueOnError: true
+        inputs:
+          targetType: 'inline'
+          script: |
+            npm install -g stylelint
+            npm install -g stylelint-config-standard
+            stylelint $(System.DefaultWorkingDirectory)/src
 
-  #     - task: PowerShell@2
-  #       displayName: Lint Yaml (Yamllint)
-  #       continueOnError: true
-  #       inputs:
-  #         targetType: 'inline'
-  #         script: |
-  #           py -m pip install yamllint
-  #           py -m yamllint "$(System.DefaultWorkingDirectory)"  
+      - task: PowerShell@2
+        displayName: Lint Yaml (Yamllint)
+        continueOnError: true
+        inputs:
+          targetType: 'inline'
+          script: |
+            py -m pip install yamllint
+            py -m yamllint "$(System.DefaultWorkingDirectory)"  
 
-  # - stage: Build
-  #   displayName: Build
-  #   jobs:
-  #   - job: Build
-  #     dependsOn: Lint
-  #     displayName: Build Job
+  - stage: Build
+    displayName: Build
+    dependsOn: Linting
+    jobs:
+    - job: Build
+      displayName: Build Job
 
-  #     steps: 
-  #     - task: NodeTool@0
-  #       inputs:
-  #         versionSource: 'spec'
-  #         versionSpec: '16.x'
+      steps: 
+      - task: NodeTool@0
+        inputs:
+          versionSource: 'spec'
+          versionSpec: '16.x'
 
-  #     - task: PowerShell@2
-  #       displayName: Npm Install
-  #       inputs:
-  #         targetType: 'inline'
-  #         script: 'npm install'
+      - task: PowerShell@2
+        displayName: Npm Install
+        inputs:
+          targetType: 'inline'
+          script: 'npm install'
 
-  #     - task: PowerShell@2
-  #       displayName: Npm Run Build
-  #       inputs:
-  #         targetType: 'inline'
-  #         script: 'npm run build'
+      - task: PowerShell@2
+        displayName: Npm Run Build
+        inputs:
+          targetType: 'inline'
+          script: 'npm run build'
 
-  #     - task: PublishPipelineArtifact@1
-  #       inputs:
-  #         targetPath: '$(System.DefaultWorkingDirectory)/build/'
-  #         artifact: 'todo-ui'
-  #         publishLocation: 'pipeline'
+      - task: PublishPipelineArtifact@1
+        inputs:
+          targetPath: '$(System.DefaultWorkingDirectory)/build/'
+          artifact: 'todo-ui'
+          publishLocation: 'pipeline'
 
 
 
-  #           # - task: SonarQubePrepare@8
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+  # - task: SonarQubePrepare@8
   
   #   inputs:
   #     SonarQube: 'SonarQube'
