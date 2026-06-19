@@ -112,7 +112,7 @@ stages:
          inputs:
            buildType: 'current'
            artifactName: 'todo-ui'
-           targetPath: '$(System.DefaultWorkingDirectory)'
+           targetPath: '$(System.DefaultWorkingDirectory)/build_artifacts'
 
 
 
