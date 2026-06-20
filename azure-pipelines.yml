@@ -111,7 +111,7 @@ stages:
       displayName: deploy to VM
       environment:
         name: Production
-        resourceName: dummy-vm
+        # resourceName: dummy-vm
         resourceType: virtualMachine
       strategy:
         runOnce: 
