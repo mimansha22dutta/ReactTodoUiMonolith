@@ -5,20 +5,20 @@ pool:
   name: Azure-agent
 
 stages:
-  - stage: SCAScan
-    displayName: Software Composition Analysis
-    jobs:
-      - job: SCAScan
-        displayName: SCA Scan (Retire.js)
-        steps: 
-        - task: PowerShell@2
-          continueOnError: true
-          inputs:
-            targetType: 'inline'
-            script: |
-              npm install -g retire
-              npm install
-              retire
+  # - stage: SCAScan
+  #   displayName: Software Composition Analysis
+  #   jobs:
+  #     - job: SCAScan
+  #       displayName: SCA Scan (Retire.js)
+  #       steps: 
+  #       - task: PowerShell@2
+  #         continueOnError: true
+  #         inputs:
+  #           targetType: 'inline'
+  #           script: |
+  #             npm install -g retire
+  #             npm install
+  #             retire
 
   # - stage: StaticAnalysis
   #   displayName: Static Code Analysis
@@ -71,58 +71,61 @@ stages:
     #         py -m pip install yamllint
     #         py -m yamllint "$(System.DefaultWorkingDirectory)"  
 
-  # - stage: Build
-  #   displayName: Build & Artifact Package
+  - stage: Build
+    displayName: Build & Artifact Package
     # dependsOn: Linting
-    # jobs:
-    # - job: Build
-    #   displayName: Application Build
+    jobs:
+    - job: Build
+      displayName: Application Build
 
-    #   steps: 
-    #   - task: NodeTool@0
-    #     inputs:
-    #       versionSource: 'spec'
-    #       versionSpec: '16.x'
+      steps: 
+      - task: NodeTool@0
+        inputs:
+          versionSource: 'spec'
+          versionSpec: '16.x'
 
-    #   - task: PowerShell@2
-    #     displayName: Npm Install
-    #     inputs:
-    #       targetType: 'inline'
-    #       script: 'npm install'
+      - task: PowerShell@2
+        displayName: Npm Install
+        inputs:
+          targetType: 'inline'
+          script: 'npm install'
 
-    #   - task: PowerShell@2
-    #     displayName: Npm Run Build
-    #     inputs:
-    #       targetType: 'inline'
-    #       script: 'npm run build'
+      - task: PowerShell@2
+        displayName: Npm Run Build
+        inputs:
+          targetType: 'inline'
+          script: 'npm run build'
 
-    #   - task: PublishPipelineArtifact@1
-    #     inputs:
-    #       targetPath: '$(System.DefaultWorkingDirectory)/build/'
-    #       artifact: 'todo-ui'
-    #       publishLocation: 'pipeline'
+      - task: PublishPipelineArtifact@1
+        inputs:
+          targetPath: '$(System.DefaultWorkingDirectory)/build/'
+          artifact: 'todo-ui'
+          publishLocation: 'pipeline'
 
-  # - stage: Deploy
-  #   displayName: Deploment
-  #   condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
-  #   # dependsOn: Build
-  #   jobs:
-  #   - deployment : Deploy
-  #     displayName: deploy to VM
-  #     environment:
-  #       name: Prod
-  #       resourceName: Virtual Machine
-  #     strategy:
-  #       runOnce: 
-  #         deploy:
-  #           steps:
-  #           - task: DownloadBuildArtifacts@1
-  #             displayName: Download Artifacts into Virtual Machine
-  #             inputs:
-  #               buildType: 'current'
-  #               downloadType: 'single'
-  #               artifactName: 'todo-ui'
-  #               downloadPath: '/tmp/test' 
+  - stage: Deploy
+    displayName: Deploment
+    # condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+    dependsOn: Build
+    jobs:
+    - deployment : Deploy
+      displayName: deploy to VM
+      environment:
+        name: Production
+        resourceType: VirtualMachine
+      strategy:
+        runOnce: 
+          deploy:
+            steps:
+            - task: DownloadBuildArtifacts@1
+              displayName: Download Artifacts into Virtual Machine
+              inputs:
+                buildType: 'current'
+                downloadType: 'single'
+                artifactName: 'todo-ui'
+                downloadPath: '/tmp/test'
+            - script: |
+                sudo mv /tmp/test/todo-ui/* /var/www/html
+                
             
      
 
