@@ -116,15 +116,19 @@ stages:
         runOnce: 
           deploy:
             steps:
-            - task: DownloadBuildArtifacts@1
+            - task: DownloadPipelineArtifact@2
               displayName: Download Artifacts into Virtual Machine
               inputs:
                 buildType: 'current'
-                downloadType: 'single'
                 artifactName: 'todo-ui'
-                downloadPath: '/tmp/test'
+                targetPath: '$(Pipeline.Workspace)'
+    
             - script: |
-                sudo mv /tmp/test/todo-ui/* /var/www/html
+                ls -la $(Pipeline.Workspace)
+                ls -la $(Pipeline.Workspace)/todo-ui
+
+                sudo cp -r $(Pipeline.Workspace)/todo-ui/* /var/www/html/
+              displayName: Deploy React Build
                 
             
      
