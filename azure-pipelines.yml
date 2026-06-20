@@ -111,7 +111,8 @@ stages:
       displayName: deploy to VM
       environment:
         name: Production
-        # resourceType: VirtualMachine
+        resourceName: dummy-vm
+        resourceType: virtualMachine
       strategy:
         runOnce: 
           deploy:
@@ -125,6 +126,16 @@ stages:
             #     pipelineId: '20260620.6'
             #     artifactName: 'todo-ui'
             #     targetPath: '$(Pipeline.Workspace)'
+            - script: |
+                echo "Hostname:"
+                hostname
+
+                echo "Current User:"
+                whoami
+
+                echo "Workspace:"
+                pwd
+              displayName: Verify VM
             - task: DownloadPipelineArtifact@2
               displayName: Download Artifacts into Virtual Machine
               inputs:
