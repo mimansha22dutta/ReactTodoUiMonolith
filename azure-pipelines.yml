@@ -110,7 +110,7 @@ stages:
     - deployment : Deploy
       displayName: deploy to VM
       environment:
-        name: Dev
+        name: mimansha_the_devops_girl
         resourceName: frontend-vm
         resourceType: virtualMachine
       strategy:
